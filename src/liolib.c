@@ -298,11 +298,11 @@ static int io_popen (lua_State *L) {
 }
 
 
-static int io_tmpfile (lua_State *L) {
-  LStream *p = newfile(L);
-  p->f = tmpfile();
-  return (p->f == NULL) ? luaL_fileresult(L, 0, NULL) : 1;
-}
+// static int io_tmpfile (lua_State *L) {
+//   LStream *p = newfile(L);
+//   p->f = tmpfile();
+//   return (p->f == NULL) ? luaL_fileresult(L, 0, NULL) : 1;
+// }
 
 
 static FILE *getiofile (lua_State *L, const char *findex) {
@@ -747,7 +747,7 @@ static const luaL_Reg iolib[] = {
   {"output", io_output},
   {"popen", io_popen},
   {"read", io_read},
-  {"tmpfile", io_tmpfile},
+//   {"tmpfile", io_tmpfile},
   {"type", io_type},
   {"write", io_write},
   {NULL, NULL}

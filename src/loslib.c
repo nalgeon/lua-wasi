@@ -101,56 +101,56 @@
 */
 #if !defined(lua_tmpnam)	/* { */
 
-#if defined(LUA_USE_POSIX)	/* { */
+// #if defined(LUA_USE_POSIX)	/* { */
 
-#include <unistd.h>
+// #include <unistd.h>
 
-#define LUA_TMPNAMBUFSIZE	32
+// #define LUA_TMPNAMBUFSIZE	32
 
-#if !defined(LUA_TMPNAMTEMPLATE)
-#define LUA_TMPNAMTEMPLATE	"/tmp/lua_XXXXXX"
-#endif
+// #if !defined(LUA_TMPNAMTEMPLATE)
+// #define LUA_TMPNAMTEMPLATE	"/tmp/lua_XXXXXX"
+// #endif
 
-#define lua_tmpnam(b,e) { \
-        strcpy(b, LUA_TMPNAMTEMPLATE); \
-        e = mkstemp(b); \
-        if (e != -1) close(e); \
-        e = (e == -1); }
+// #define lua_tmpnam(b,e) { \
+//         strcpy(b, LUA_TMPNAMTEMPLATE); \
+//         e = mkstemp(b); \
+//         if (e != -1) close(e); \
+//         e = (e == -1); }
 
-#else				/* }{ */
+// #else				/* }{ */
 
-/* ISO C definitions */
-#define LUA_TMPNAMBUFSIZE	L_tmpnam
-#define lua_tmpnam(b,e)		{ e = (tmpnam(b) == NULL); }
+// /* ISO C definitions */
+// #define LUA_TMPNAMBUFSIZE	L_tmpnam
+// #define lua_tmpnam(b,e)		{ e = (tmpnam(b) == NULL); }
 
-#endif				/* } */
+// #endif				/* } */
 
 #endif				/* } */
 /* }================================================================== */
 
 
 #if !defined(l_system)
-#if defined(LUA_USE_IOS)
-/* Despite claiming to be ISO C, iOS does not implement 'system'. */
-#define l_system(cmd) ((cmd) == NULL ? 0 : -1)
-#else
-#define l_system(cmd)	system(cmd)  /* default definition */
-#endif
+// #if defined(LUA_USE_IOS)
+// /* Despite claiming to be ISO C, iOS does not implement 'system'. */
+// #define l_system(cmd) ((cmd) == NULL ? 0 : -1)
+// #else
+// #define l_system(cmd)	system(cmd)  /* default definition */
+// #endif
 #endif
 
 
-static int os_execute (lua_State *L) {
-  const char *cmd = luaL_optstring(L, 1, NULL);
-  int stat;
-  errno = 0;
-  stat = l_system(cmd);
-  if (cmd != NULL)
-    return luaL_execresult(L, stat);
-  else {
-    lua_pushboolean(L, stat);  /* true if there is a shell */
-    return 1;
-  }
-}
+// static int os_execute (lua_State *L) {
+//   const char *cmd = luaL_optstring(L, 1, NULL);
+//   int stat;
+//   errno = 0;
+//   stat = l_system(cmd);
+//   if (cmd != NULL)
+//     return luaL_execresult(L, stat);
+//   else {
+//     lua_pushboolean(L, stat);  /* true if there is a shell */
+//     return 1;
+//   }
+// }
 
 
 static int os_remove (lua_State *L) {
@@ -166,15 +166,15 @@ static int os_rename (lua_State *L) {
 }
 
 
-static int os_tmpname (lua_State *L) {
-  char buff[LUA_TMPNAMBUFSIZE];
-  int err;
-  lua_tmpnam(buff, err);
-  if (l_unlikely(err))
-    return luaL_error(L, "unable to generate a unique filename");
-  lua_pushstring(L, buff);
-  return 1;
-}
+// static int os_tmpname (lua_State *L) {
+//   char buff[LUA_TMPNAMBUFSIZE];
+//   int err;
+//   lua_tmpnam(buff, err);
+//   if (l_unlikely(err))
+//     return luaL_error(L, "unable to generate a unique filename");
+//   lua_pushstring(L, buff);
+//   return 1;
+// }
 
 
 static int os_getenv (lua_State *L) {
@@ -406,14 +406,14 @@ static const luaL_Reg syslib[] = {
   {"clock",     os_clock},
   {"date",      os_date},
   {"difftime",  os_difftime},
-  {"execute",   os_execute},
+//   {"execute",   os_execute},
   {"exit",      os_exit},
   {"getenv",    os_getenv},
   {"remove",    os_remove},
   {"rename",    os_rename},
   {"setlocale", os_setlocale},
   {"time",      os_time},
-  {"tmpname",   os_tmpname},
+//   {"tmpname",   os_tmpname},
   {NULL, NULL}
 };
 
