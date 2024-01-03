@@ -11,3 +11,4 @@ prepare:
 dist:
 	mkdir -p dist
 	cp src/lua.wasm dist/
+	node_modules/.bin/esbuild src/index.js --minify --target=es2021 --format=esm --outfile=dist/index.js

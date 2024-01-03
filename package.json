@@ -1,0 +1,19 @@
+{
+    "name": "@antonz/lua-wasi",
+    "version": "5.4.6",
+    "description": "Lua WASI build.",
+    "author": "Anton Zhiyanov",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nalgeon/lua-wasi.git"
+    },
+    "files": [
+        "dist/*"
+    ],
+    "main": "dist/index.js",
+    "devDependencies": {
+        "esbuild": "^0.19.11"
+    },
+    "scripts": {}
+}
