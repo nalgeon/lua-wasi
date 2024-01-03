@@ -4,15 +4,15 @@
 # == CHANGE THE SETTINGS BELOW TO SUIT YOUR ENVIRONMENT =======================
 
 # Your platform. See PLATS for possible values.
-PLAT= guess
+PLAT= posix
 
-CC= gcc -std=gnu99
+CC= wasicc -std=gnu99
 CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_3 $(SYSCFLAGS) $(MYCFLAGS)
 LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
 LIBS= -lm $(SYSLIBS) $(MYLIBS)
 
-AR= ar rcu
-RANLIB= ranlib
+AR= wasiar rcu
+RANLIB= wasiranlib
 RM= rm -f
 UNAME= uname
 
@@ -30,7 +30,7 @@ CMCFLAGS=
 
 # == END OF USER SETTINGS -- NO NEED TO CHANGE ANYTHING BELOW THIS LINE =======
 
-PLATS= guess aix bsd c89 freebsd generic ios linux linux-readline macosx mingw posix solaris
+PLATS= posix
 
 LUA_A=	liblua.a
 CORE_O=	lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o lmem.o lobject.o lopcodes.o lparser.o lstate.o lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o
@@ -46,6 +46,7 @@ LUAC_O=	luac.o
 ALL_O= $(BASE_O) $(LUA_O) $(LUAC_O)
 ALL_T= $(LUA_A) $(LUA_T) $(LUAC_T)
 ALL_A= $(LUA_A)
+ALL_W= lua.wasm luac.wasm
 
 # Targets start here.
 default: $(PLAT)
@@ -70,7 +71,7 @@ test:
 	./$(LUA_T) -v
 
 clean:
-	$(RM) $(ALL_T) $(ALL_O)
+	$(RM) $(ALL_T) $(ALL_O) $(ALL_W)
 
 depend:
 	@$(CC) $(CFLAGS) -MM l*.c
@@ -94,57 +95,11 @@ help:
 	@echo "   $(PLATS)"
 	@echo "See doc/readme.html for complete instructions."
 
-guess:
-	@echo Guessing `$(UNAME)`
-	@$(MAKE) `$(UNAME)`
-
-AIX aix:
-	$(MAKE) $(ALL) CC="xlc" CFLAGS="-O2 -DLUA_USE_POSIX -DLUA_USE_DLOPEN" SYSLIBS="-ldl" SYSLDFLAGS="-brtl -bexpall"
-
-bsd:
-	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_POSIX -DLUA_USE_DLOPEN" SYSLIBS="-Wl,-E"
-
-c89:
-	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_C89" CC="gcc -std=c89"
-	@echo ''
-	@echo '*** C89 does not guarantee 64-bit integers for Lua.'
-	@echo '*** Make sure to compile all external Lua libraries'
-	@echo '*** with LUA_USE_C89 to ensure consistency'
-	@echo ''
-
-FreeBSD NetBSD OpenBSD freebsd:
-	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_LINUX -DLUA_USE_READLINE -I/usr/include/edit" SYSLIBS="-Wl,-E -ledit" CC="cc"
-
-generic: $(ALL)
-
-ios:
-	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_IOS"
-
-Linux linux:	linux-noreadline
-
-linux-noreadline:
-	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_LINUX" SYSLIBS="-Wl,-E -ldl"
-
-linux-readline:
-	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_LINUX -DLUA_USE_READLINE" SYSLIBS="-Wl,-E -ldl -lreadline"
-
-Darwin macos macosx:
-	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_MACOSX -DLUA_USE_READLINE" SYSLIBS="-lreadline"
-
-mingw:
-	$(MAKE) "LUA_A=lua54.dll" "LUA_T=lua.exe" \
-	"AR=$(CC) -shared -o" "RANLIB=strip --strip-unneeded" \
-	"SYSCFLAGS=-DLUA_BUILD_AS_DLL" "SYSLIBS=" "SYSLDFLAGS=-s" lua.exe
-	$(MAKE) "LUAC_T=luac.exe" luac.exe
-
 posix:
-	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_POSIX"
-
-SunOS solaris:
-	$(MAKE) $(ALL) SYSCFLAGS="-DLUA_USE_POSIX -DLUA_USE_DLOPEN -D_REENTRANT" SYSLIBS="-ldl"
+	$(MAKE) $(ALL)
 
 # Targets that do not create files (not all makes understand .PHONY).
-.PHONY: all $(PLATS) help test clean default o a depend echo
+.PHONY: all help test clean default o a depend echo
 
 # Compiler modules may use special flags.
 llex.o:
